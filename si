@@ -1,0 +1,490 @@
+Vou criar um site escolar completo com HTML, CSS e JavaScript puro, sem bibliotecas ou frameworks externos, seguindo seu prompt. Aqui está a implementação:
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --secondary-color: #2196f3;
+            --danger-color: #f44336;
+            --success-color: #4caf50;
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --dark-gray: #757575;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 1rem;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .dashboard {
+            display: none;
+            grid-template-columns: 250px 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            padding: 0.5rem 0;
+            cursor: pointer;
+        }
+
+        .sidebar li:hover {
+            color: var(--secondary-color);
+        }
+
+        .sidebar li.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+
+        .absent {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            background-color: #ffeb3b;
+            color: #333;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .day-schedule {
+            margin-bottom: 2rem;
+        }
+
+        .logout-btn {
+            background-color: var(--danger-color);
+            margin-top: 1rem;
+        }
+
+        .logout-btn:hover {
+            background-color: #e53935;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Sistema Escolar</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="login-view">
+            <div class="login-container">
+                <h2>Login</h2>
+                <div class="form-group">
+                    <label for="user-type">Tipo de Usuário</label>
+                    <select id="user-type">
+                        <option value="student">Aluno</option>
+                        <option value="pedagogo">Pedagogo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="Digite seu e-mail">
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="Digite sua senha">
+                </div>
+                <button id="login-btn">Entrar</button>
+            </div>
+        </div>
+
+        <div id="dashboard-view" style="display: none;">
+            <div class="dashboard">
+                <aside class="sidebar">
+                    <h3 id="welcome-message">Bem-vindo, Usuário</h3>
+                    <ul id="menu-items"></ul>
+                    <button class="logout-btn" id="logout-btn">Sair</button>
+                </aside>
+                <main class="main-content" id="main-content">
+                    <!-- Conteúdo dinâmico será inserido aqui -->
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados iniciais simulando um banco de dados
+        const database = {
+            users: [
+                { id: 1, email: 'aluno@escola.com', password: '123456', type: 'student', name: 'João Silva', class: '8A' },
+                { id: 2, email: 'pedagogo@escola.com', password: '123456', type: 'pedagogo', name: 'Maria Souza' }
+            ],
+            schedules: [
+                { id: 1, day: 'Segunda', time: '08:00', class: '8A', subject: 'Matemática', teacher: 'Professor A', absent: false },
+                { id: 2, day: 'Segunda', time: '09:00', class: '8A', subject: 'Português', teacher: 'Professor B', absent: false },
+                { id: 3, day: 'Segunda', time: '10:30', class: '8A', subject: 'Ciências', teacher: 'Professor C', absent: false },
+                { id: 4, day: 'Terça', time: '08:00', class: '8A', subject: 'História', teacher: 'Professor D', absent: false },
+                { id: 5, day: 'Terça', time: '09:00', class: '8A', subject: 'Geografia', teacher: 'Professor E', absent: false }
+            ],
+            announcements: [
+                { id: 1, title: 'Bem-vindos ao novo ano letivo!', content: 'Desejamos a todos um excelente ano de aprendizado e crescimento.', date: '10/01/2024' },
+                { id: 2, title: 'Reunião de pais', content: 'A reunião de pais será no dia 20/02 às 19h no auditório.', date: '15/01/2024' }
+            ]
+        };
+
+        // Estado da aplicação
+        let currentUser = null;
+        const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+        const times = ['08:00', '09:00', '10:30', '13:30', '14:30'];
+
+        // Elementos do DOM
+        const loginView = document.getElementById('login-view');
+        const dashboardView = document.getElementById('dashboard-view');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const userTypeSelect = document.getElementById('user-type');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const menuItems = document.getElementById('menu-items');
+        const mainContent = document.getElementById('main-content');
+
+        // Funções auxiliares
+        function getCurrentDay() {
+            const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+            const today = new Date().getDay();
+            return days[today];
+        }
+
+        function renderStudentDashboard() {
+            const today = getCurrentDay();
+            const studentClass = currentUser.class;
+            
+            const todaySchedules = database.schedules.filter(
+                schedule => schedule.day === today && schedule.class === studentClass
+            );
+
+            let html = `
+                <h2>Aulas de Hoje (${today})</h2>
+                ${todaySchedules.length > 0 ? `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Horário</th>
+                                <th>Disciplina</th>
+                                <th>Professor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${todaySchedules.map(schedule => `
+                                <tr ${schedule.absent ? 'class="absent"' : ''}>
+                                    <td>${schedule.time}</td>
+                                    <td>${schedule.subject}</td>
+                                    <td>${schedule.teacher}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                ` : '<p>Não há aulas agendadas para hoje.</p>'}
+                
+                <h2 style="margin-top: 2rem;">Avisos</h2>
+                ${database.announcements.length > 0 ? database.announcements.map(announcement => `
+                    <div class="alert">
+                        <h3>${announcement.title}</h3>
+                        <p>${announcement.content}</p>
+                        <small>${announcement.date}</small>
+                    </div>
+                `).join('') : '<p>Não há avisos no momento.</p>'}
+            `;
+
+            mainContent.innerHTML = html;
+        }
+
+        function renderPedagogoSchedule() {
+            let html = `
+                <h2>Horários e Faltas</h2>
+                <p>Marque as faltas dos professores:</p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="filter-day">Dia da Semana</label>
+                        <select id="filter-day">
+                            <option value="all">Todos os dias</option>
+                            ${daysOfWeek.map(day => `<option value="${day}">${day}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filter-class">Turma</label>
+                        <select id="filter-class">
+                            <option value="all">Todas as turmas</option>
+                            <option value="8A">8A</option>
+                            <option value="8B">8B</option>
+                            <option value="9A">9A</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button id="apply-filter">Aplicar Filtro</button>
+                    </div>
+                </div>
+            `;
+
+            database.schedules.forEach(day => {
+                const daySchedules = database.schedules.filter(s => s.day === day.day);
+                const uniqueDays = [...new Set(database.schedules.map(s => s.day))];
+                
+                uniqueDays.forEach(day => {
+                    const daySchedules = database.schedules.filter(s => s.day === day);
+                    
+                    html += `
+                        <div class="day-schedule">
+                            <h3>${day}</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Horário</th>
+                                        <th>Turma</th>
+                                        <th>Disciplina</th>
+                                        <th>Professor</th>
+                                        <th>Faltou?</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${daySchedules.map(schedule => `
+                                        <tr>
+                                            <td>${schedule.time}</td>
+                                            <td>${schedule.class}</td>
+                                            <td>${schedule.subject}</td>
+                                            <td>${schedule.teacher}</td>
+                                            <td>
+                                                <input type="checkbox" 
+                                                       class="absence-checkbox" 
+                                                       data-id="${schedule.id}"
+                                                       ${schedule.absent ? 'checked' : ''}>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                });
+            });
+
+            mainContent.innerHTML = html;
+
+            // Adiciona eventos aos checkboxes de falta
+            document.querySelectorAll('.absence-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const scheduleId = parseInt(this.getAttribute('data-id'));
+                    const schedule = database.schedules.find(s => s.id === scheduleId);
+                    schedule.absent = this.checked;
+                });
+            });
+        }
+
+        function renderPedagogoAnnouncements() {
+            let html = `
+                <h2>Avisos Gerais</h2>
+                <p>Poste avisos que serão visíveis para todos os alunos:</p>
+                
+                <div class="form-group">
+                    <label for="announcement-title">Título</label>
+                    <input type="text" id="announcement-title" placeholder="Título do aviso">
+                </div>
+                <div class="form-group">
+                    <label for="announcement-content">Conteúdo</label>
+                    <textarea id="announcement-content" rows="4" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"></textarea>
+                </div>
+                <button id="post-announcement">Postar Aviso</button>
+                
+                <h3 style="margin-top: 2rem;">Avisos Publicados</h3>
+                ${database.announcements.length > 0 ? database.announcements.map(announcement => `
+                    <div class="alert" style="position: relative;">
+                        <button class="delete-announcement" data-id="${announcement.id}" style="position: absolute; top: 0.5rem; right: 0.5rem; background: var(--danger-color); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">×</button>
+                        <h3>${announcement.title}</h3>
+                        <p>${announcement.content}</p>
+                        <small>${announcement.date}</small>
+                    </div>
+                `).join('') : '<p>Não há avisos no momento.</p>'}
+            `;
+
+            mainContent.innerHTML = html;
+
+            // Adiciona evento para postar novo aviso
+            document.getElementById('post-announcement').addEventListener('click', function() {
+                const title = document.getElementById('announcement-title').value;
+                const content = document.getElementById('announcement-content').value;
+                
+                if (title && content) {
+                    const newAnnouncement = {
+                        id: database.announcements.length + 1,
+                        title,
+                        content,
+                        date: new Date().toLocaleDateString('pt-BR')
+                    };
+                    
+                    database.announcements.unshift(newAnnouncement);
+                    renderPedagogoAnnouncements();
+                }
+            });
+
+            // Adiciona eventos para deletar avisos
+            document.querySelectorAll('.delete-announcement').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    database.announcements = database.announcements.filter(a => a.id !== id);
+                    renderPedagogoAnnouncements();
+                });
+            });
+        }
+
+        function createMenuItems() {
+            menuItems.innerHTML = '';
+            
+            if (currentUser.type === 'student') {
+                menuItems.innerHTML = `
+                    <li class="active" data-view="schedule">Minhas Aulas</li>
+                `;
+            } else {
+                menuItems.innerHTML = `
+                    <li class="active" data-view="schedule-manager">Horários e Faltas</li>
+                    <li data-view="announcements">Avisos Gerais</li>
+                `;
+            }
+
+            // Adiciona eventos aos itens do menu
+            const menuItemsList = document.querySelectorAll('#menu-items li');
+            menuItemsList.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove a classe active de todos os itens
+                    menuItemsList.forEach(i => i.classList.remove('active'));
+                    // Adiciona a classe active ao item clicado
+                    this.classList.add('active');
+                    
+                    // Renderiza o conteúdo correspondente
+                    const view = this.getAttribute('data-view');
+                    switch(view) {
+                        case 'schedule':
+                            renderStudentDashboard();
+                            break;
+                       
